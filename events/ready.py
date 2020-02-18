@@ -5,7 +5,7 @@ class Ready(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f"{self.bot.user} is ready")
+        print(f"{self.bot.user} is ready. Using discord.py version {self.discord.__version__}")
 
 def setup(bot):
     bot.add_cog(Ready(bot))
