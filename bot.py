@@ -7,13 +7,10 @@ import os
 import sentry_sdk
 sentry_sdk.init(os.getenv("SENTRY_DSN"))
 
-from db.db import Database
-
 bot = commands.Bot(command_prefix="!", activity=discord.Game(name="made by dps#0001"))
-bot.Database = Database()
 
 # Load cogs
-cogs = ["cogs.ping", "cogs.yiff", "cogs.neko", "cogs.echo"]
+cogs = ["cogs.ping", "cogs.yiff", "cogs.neko", "cogs.echo", "cogs.kick"]
 for c in cogs: 
     bot.load_extension(c)
 
