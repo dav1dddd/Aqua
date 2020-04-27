@@ -1,13 +1,23 @@
+# Discord
 import discord
 from discord.ext import commands
-import datetime
+
+# .env
 from dotenv import load_dotenv
 load_dotenv()
+
+# misc
 import os
+import random
+
+# sentry
 import sentry_sdk
 sentry_sdk.init(os.getenv("SENTRY_DSN"))
 
-bot = commands.Bot(command_prefix="!", activity=discord.Game(name="made by dps#0001"))
+# db
+from db import db
+
+bot = commands.Bot(command_prefix="]", activity=discord.Game(name="made by dps#7551"))
 
 # Load cogs
 for c in os.listdir(path=f"./cogs"):
