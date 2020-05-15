@@ -1,2 +1,0 @@
-multiple functions can be running at the same time without interrupting each other
-each function is run on a different thread when fired
