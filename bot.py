@@ -26,7 +26,7 @@ class CustomBot(commands.Bot):
     def __init__(self):
         # Call superclass commands.Bot. Equal to commands.Bot(command_prefix=self.get_prefix)
         super().__init__(
-            command_prefix=self.get_prefix, 
+            command_prefix=self.get_prefix_, 
             activity=discord.Game(
                 name="made by david.#7551"
                 ), 
@@ -36,9 +36,9 @@ class CustomBot(commands.Bot):
         self.database = get_event_loop().run_until_complete(
             create_pool(getenv("DB_URL"))
         )
-        # Now self.database is allocated to the postgresql database
+        # self.database is allocated to postgresql database
 
-    async def get_prefix(self, bot, message):
+    async def get_prefix_(self, bot, message):
         guild_prefix = await self.database.fetchrow(
             """
             SELECT prefix
