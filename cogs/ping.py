@@ -4,7 +4,10 @@ class Ping(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
-	@commands.command()
+	@commands.command(
+		name="ping",
+		description="ping pong"
+	)
 	async def ping(self, ctx):
 		await ctx.send("test")
 

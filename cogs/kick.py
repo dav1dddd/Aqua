@@ -5,7 +5,10 @@ class Kick(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(
+        name="kick",
+        description="Kick a guild member"
+    )
     async def kick(self, ctx, member: discord.Member, reason=None): 
         # why would anyone do this though lol
         if member == ctx.message.author:
