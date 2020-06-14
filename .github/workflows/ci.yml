@@ -1,0 +1,9 @@
+name: Aqua
+on:
+  # Trigger workflow for push and pull requests
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
