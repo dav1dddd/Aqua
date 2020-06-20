@@ -1,27 +1,21 @@
 from discord import Embed
 from discord.ext import commands
-import aiohttp
+from aiohttp import ClientSession
 
 class Neko(commands.Cog):
-	def __init__(self, bot):
-		self.bot = bot
+    def __init__(self, bot):
+        self.bot = bot
 
-	@commands.command()
-	async def neko(self, ctx):
-		c = aiohttp.ClientSession()
-		async with c as s:
-			async with s.get("https://nekos.life/api/v2/img/neko") as response:
-				restxt = await response.json()
-				neko_UwU = restxt["url"]
-				
-				# Make a new embed :3
-				embed = Embed(
-					title="A cute neko :3",
-					colour=0x9b59b6
-				)
-				
-				embed.set_image(url=neko_UwU)
-				await ctx.send(embed=embed)
+    @commands.command()
+    async def neko(self, ctx):
+        async with ClientSession() as s:
+            async with s.get("https://nekos.life/api/v2/img/neko") as r:
+                if r.status == 200:
+                    json = await r.json()
+                    await ctx.send(embed=Embed(
+                        title="Neko >w<"
+                    ).set_image(url=json["url"]))
 
 def setup(bot):
-	bot.add_cog(Neko(bot))
+    bot.add_cog(Neko(bot))
+    
