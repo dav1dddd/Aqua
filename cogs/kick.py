@@ -9,6 +9,7 @@ class Kick(commands.Cog):
         name="kick",
         description="Kick a guild member"
     )
+    @commands.has_guild_permissions(kick_members=True)
     async def kick(self, ctx, member: discord.Member, reason=None): 
         # why would anyone do this though lol
         if member == ctx.message.author:
