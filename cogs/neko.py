@@ -15,6 +15,8 @@ class Neko(commands.Cog):
                     await ctx.send(embed=Embed(
                         title="Neko >w<"
                     ).set_image(url=json["url"]))
+                else:
+                    print(f"looks like there was an error :/. Here is the status code {r.status}")
 
 def setup(bot):
     bot.add_cog(Neko(bot))
