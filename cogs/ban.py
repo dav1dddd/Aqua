@@ -1,4 +1,4 @@
-import discord
+from discord import Member, Embed
 from discord.ext import commands
 from datetime import date
 
@@ -10,7 +10,8 @@ class Ban(commands.Cog):
         name="ban",
         description="Bans a guild member and stores in banlist (until unbanned)"
     )
-    async def ban(self, ctx, member: discord.Member, reason=None):
+    @commands.has_guild_permissions(ban_members=True)
+    async def ban(self, ctx, member: Member, reason=None):
         if member == ctx.message.author:
             await ctx.send("You cannot ban yourself.")
     
@@ -18,12 +19,12 @@ class Ban(commands.Cog):
         if reason == None:
             reason = "No reason"
         
-        banmessage = discord.Embed(
+        banmessage = Embed(
             title=f"You were banned in **{ctx.guild.name}** for **{reason}**",
         )
         await member.send(embed=banmessage)
 
-        banembed = discord.Embed(
+        banembed = Embed(
            title=f"Banned {member} 🔨" 
         )
         await member.ban(reason=reason)
