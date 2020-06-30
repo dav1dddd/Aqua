@@ -6,7 +6,15 @@ class Ready(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f"{self.bot.user} is ready. Using discord.py version {__version__}.")
+        db = self.bot.database
+
+        prefix = await db.fetchval(
+            """
+            SELECT prefix FROM guilds
+            """
+        )
+
+        print(f"{self.bot.user} is ready. Using discord.py version {__version__}. Prefix: {prefix}")
         print(f"Cogs: {[(i) for i in self.bot.cogs]}")
 
 def setup(bot):
