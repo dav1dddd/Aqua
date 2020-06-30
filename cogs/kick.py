@@ -1,4 +1,4 @@
-import discord
+from discord import Embed
 from discord.ext import commands
 
 class Kick(commands.Cog):
@@ -20,13 +20,13 @@ class Kick(commands.Cog):
             reason = "no reason"
 
         # Message to user
-        msgtouser = discord.Embed(
+        msgtouser = Embed(
                     title=f"You were kicked from {ctx.guild.name} for {reason}."
                 )
         await member.send(embed=msgtouser)
 
         # Kick
-        kickembed = discord.Embed(
+        kickembed = Embed(
                     title=f"{member} was kicked!"
                 )
         await member.kick(reason=reason)
