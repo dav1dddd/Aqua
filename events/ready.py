@@ -7,6 +7,13 @@ class Ready(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         db = self.bot.database
+        
+        # Create table for prefix
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS guilds(id serial PRIMARY KEY, guild_id bigint, prefix text)
+            """
+        )
 
         prefix = await db.fetchval(
             """
@@ -14,8 +21,9 @@ class Ready(commands.Cog):
             """
         )
 
-        print(f"{self.bot.user} is ready. Using discord.py version {__version__}. Prefix: {prefix}")
+        print(f"{self.bot.user} is ready. Using discord.py version {__version__}.")
         print(f"Cogs: {[(i) for i in self.bot.cogs]}")
+        print(await db.execute("SELECT * FROM guilds"))
 
 def setup(bot):
     bot.add_cog(Ready(bot))

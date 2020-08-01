@@ -31,43 +31,107 @@ class guildSettings(commands.Cog):
 
         # Check if emoji is reacted to.
         def check(reaction, user):
-            return user == ctx.message.author and str(reaction.emoji) == "📜"
+            return user == ctx.message.author and str(reaction.emoji) in reactions
 
         # Wait for reaction then do something once reacted.
         try:
-            reaction, user = await self.bot.wait_for("reaction_add", check=check, timeout=60.0)
+            reaction = await self.bot.wait_for("reaction_add", check=check, timeout=60.0)
         except TimeoutError:
             await ctx.send("You didn't react on time")
         else:
-            print(f"{user} reacted with {reaction}")
-
-            inputEmbed = Embed(
-                title="Enter the ID of your log channel. This will be added to the database",
-            )
-
-            await ctx.send(embed=inputEmbed)
-            channel_id = await self.bot.wait_for("message")
-
-            # Create table and add channel ID to database. This can be fetched in on_member_join or another event (for sending logs to a different channel).
             db = self.bot.database
-            await db.execute(
-                """
-                CREATE TABLE IF NOT EXISTS logs(
-                    id serial PRIMARY KEY,
-                    logchannel bigint
+
+            # Prefix
+            if str(reaction.emoji) == reactions[0]:
+                # Prefix
+                checkPrefixExists = await db.fetchrow(
+                    """
+                    SELECT prefix FROM guilds
+                    WHERE guildID = $1
+                    """,
+                    ctx.message.guild.id
                 )
-                """
-            )
 
-            await db.execute(
-                """
-                INSERT INTO logs(logchannel)
-                VALUES ($1)
-                """,
-                int(channel_id.content)
-            )
+                prefixembed = Embed(
+                    title="Type in the prefix that you want"
+                )
+                if checkPrefixExists:
+                    # Wait for websocket event
+                    prefix = self.bot.wait_for("message")
 
-            await ctx.send("Channel ID has been added to database! ✨")
+                    # Updated the prefix in the database with the prefix given
+                    await db.execute(
+                        """
+                        INSERT INTO guilds
+                        """
+                    )
+
+           
+            # Logs
+            if str(reaction.emoji) == reactions[1]:
+                # Logs 📜
+
+                # Check if the channel ID exists in the database
+                # Send an embed if it does exist
+                checkIfIDExists = await db.fetchrow(
+                    """
+                    SELECT logchannel FROM logs
+                    WHERE guildID = $1
+                    """,
+                    ctx.message.guild.id
+                )
+
+                updateEmbed = Embed(
+                    title="Would you like to update the log channel ID in your database?"
+                )
+
+                if checkIfIDExists:
+                    IDreactions = await ctx.send(embed=updateEmbed)
+                    await IDreactions.add_reaction("✅")
+                    await IDreactions.add_reaction("❌")
+
+                    # await db.execute(
+                    #     """
+                    #     UPDATE logs
+                    #     SET logchannel = $2
+                    #     WHERE guildID = $1
+                    #     """,
+                    #     ctx.message.guild.id,
+                    #     int(update_channel_id.content)
+                    # )
+                    
+                    await ctx.send("Channel ID has been updated ✨")
+                else:
+                    inputEmbed = Embed(
+                        title="Enter the ID of your log channel. This will be added to the database",
+                    )
+
+                    await ctx.send(embed=inputEmbed)
+                    
+                    # Wait for websocket event "message"
+                    channel_id = await self.bot.wait_for("message")
+
+                    # Create table and add channel ID to database. This can be fetched in on_member_join or another event (for sending logs to a different channel).
+                    await db.execute(
+                        """
+                        CREATE TABLE IF NOT EXISTS logs(
+                            id serial PRIMARY KEY,
+                            guildID bigint,
+                            logchannel bigint
+                        )
+                        """
+                    )
+
+                    await db.execute(
+                        """
+                        INSERT INTO logs (guildID, logchannel)
+                        VALUES ($1, $2)
+                        """,
+                        ctx.message.guild.id,
+                        int(channel_id.content)
+                    )
+
+                    await ctx.send("Channel ID has been added to database! ✨")
 
 def setup(bot):
     bot.add_cog(guildSettings(bot))

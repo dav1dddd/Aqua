@@ -1,4 +1,4 @@
-from discord import Embed
+from discord import Embed, Member
 from discord.ext import commands
 
 class Kick(commands.Cog):
@@ -10,7 +10,7 @@ class Kick(commands.Cog):
         description="Kick a guild member"
     )
     @commands.has_guild_permissions(kick_members=True)
-    async def kick(self, ctx, member: discord.Member, reason=None): 
+    async def kick(self, ctx, member: Member, reason=None): 
         # why would anyone do this though lol
         if member == ctx.message.author:
             await ctx.send("You can't kick yourself..")

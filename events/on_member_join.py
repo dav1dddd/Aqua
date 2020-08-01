@@ -1,4 +1,4 @@
-from discord import Member, Guild, Embed
+from discord import Member, Embed
 from discord.ext import commands
 
 class onMemberJoin(commands.Cog):
@@ -26,6 +26,29 @@ class onMemberJoin(commands.Cog):
         joinembed.set_thumbnail(url=member.avatar_url)
 
         await self.bot.get_channel(channel_id).send(embed=joinembed)
+
+        # Send message to member asking to verify via email.
+        message = await member.send(
+            content=f"Hello {member.name}, welcome to {member.guild}! You must verify via email to access the guild."
+        )
+        
+        reactions = ["✅", "❌"]
+        for i in reactions:
+            await message.add_reaction(i)
+
+        def check(r, u):
+            return u == member.name and str(r.emoji) in reactions
+
+        r, u = await self.bot.wait_for("reaction_add", check=check)
+        if str(r.emoji) == reactions[0]:
+            await member.send(content=f"You'll need to provide your email address so a verification code can be sent. ")
+            email = await self.bot.wait_for("message")
+            print(email.content)
+
+        else:
+            await member.send(content="Without verifying your email, you can't access any channels.")
+
+        
 
 def setup(bot):
     bot.add_cog(onMemberJoin(bot))
