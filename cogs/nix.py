@@ -16,7 +16,7 @@ class Nix(commands.Cog):
 
     async def nix(self, ctx):
         # Get the NixOS github JSON
-        nixos_repo = "https://api.github.com/users/NixOS"
+        nixos_repo = "https://api.githu.com/users/NixOS"
         async with ClientSession() as session:
             async with session.get(nixos_repo) as response:
                 if (response.status == 200):
@@ -55,7 +55,8 @@ class Nix(commands.Cog):
         if isinstance(error, commands.CommandInvokeError): # isinstance basically means "the same as"
                 # Response should be 200, but if it isn't, let the user know.
             await ctx.send(embed=Embed(
-                title="⚠️ Couldn't access the GitHub API. You can check the status [here](https://www.githubstatus.com).",
+                title="⚠️ Seems like there's a problem accessing the GitHub API.",
+                description="Check status [here](https://githubstatus.com)",
                 colour=0xec7063
             ))
 
