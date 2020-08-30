@@ -53,5 +53,14 @@ class GitHub(commands.Cog):
                         .set_thumbnail(url=avatar_url)
                         .set_footer(text=f"Created at | {datetime.now().strftime('%d.%m.%Y')}")
                     )
+
+    @git.error
+    async def git_error(self, ctx, error):
+        if isinstance(error, commands.CommandInvokeError):
+            await ctx.send(embed=Embed(
+                title="⚠️ Couldn't find that user on GitHub.",
+                colour=0xec7063
+            ))
+
 def setup(bot):
     bot.add_cog(GitHub(bot))
