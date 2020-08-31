@@ -3,6 +3,10 @@ from discord.ext import commands
 from aiohttp import ClientSession
 from datetime import datetime
 
+api_url = "https://api.github.com/"
+users = "https://api.github.com/users/"
+user_repos = "https://api.github.com/repos/"
+
 class GitHub(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -16,17 +20,18 @@ class GitHub(commands.Cog):
     async def git(self, ctx, *args: str):
         if not args:
             await ctx.send(
-                "You need to include some arguments for this to do anything. Here is what's possible as of now. `user`"
+                "You need to include some arguments for this to do anything. Here is what's possible as of now. `user`, `repo`"
             )
             return
-        elif args[0] != "user":
-            await ctx.send("No, it is `git user`")
-            return
+        elif args[0] == "user":
+            url = f"{users}{args[1]}"
         else:
+            return
         # Search for a GitHub user.
+        async def request():
             async with ClientSession(headers={"Accept": "application/vnd.github.v3+json"}) as session:
-                users = f"https://api.github.com/users/{args[1]}"
-                async with session.get(users) as response:
+                async with session.get(url) as response:
+                    print(await response.json())
                     json = await response.json()
                     name = json["login"]
                     avatar_url = json["avatar_url"]
@@ -60,6 +65,8 @@ class GitHub(commands.Cog):
                             .set_thumbnail(url=avatar_url)
                             .set_footer(text=f"Created at | {datetime.now().strftime('%d.%m.%Y')}")
                         )
+        await request()
+        
 
     @git.error
     async def git_error(self, ctx, error):
