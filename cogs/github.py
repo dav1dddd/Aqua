@@ -2,6 +2,7 @@ from discord import Embed
 from discord.ext import commands
 from aiohttp import ClientSession
 from datetime import datetime
+from asyncio import TimeoutError
 
 api_url = "https://api.github.com/"
 users = "https://api.github.com/users/"
@@ -25,6 +26,8 @@ class GitHub(commands.Cog):
             return
         elif args[0] == "user":
             url = f"{users}{args[1]}"
+        elif args[0] == "search":
+            url = f"{user_repos}{args[1]}"
         else:
             return
         # Search for a GitHub user.
@@ -46,8 +49,8 @@ class GitHub(commands.Cog):
                     if website == "":
                         website = None
 
-                    await ctx.send(
-                            embed=Embed(
+                    githubuserembed = await ctx.send(
+                        embed=Embed(
                                 title="GitHub user",
                                 colour=0x7DCEA0,
                             )
@@ -64,7 +67,26 @@ class GitHub(commands.Cog):
                             .add_field(name="Twitter", value=twitter, inline=True)
                             .set_thumbnail(url=avatar_url)
                             .set_footer(text=f"Created at | {datetime.now().strftime('%d.%m.%Y')}")
-                        )
+                    )
+
+                    # Now I am going to ask the user if they want to see a user, or a repository from the user.
+                    # Probably going to change this but idk
+
+                    reactions = ["👨‍🦲", "🔎"]
+                    
+                    # Check if embed was reacted to
+                    def check(user, reaction):
+                        return user == ctx.message.author and str(reaction.emoji) in reactions
+                        
+                    # Wait for websocket event ("message") to be dispatched
+                    try:
+                        await self.bot.wait_for("reaction_add", check=check, timeout=60)
+                    except TimeoutError:
+                        await ctx.send("You didn't react on time.")
+
+                    for i in reactions:
+                        await githubuserembed.add_reaction(i)
+            
         await request()
         
 
