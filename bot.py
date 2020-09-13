@@ -4,7 +4,7 @@ import sentry_sdk
 from asyncio import get_event_loop
 import random
 from os import getenv, listdir, path
-import discord
+from discord import Status, Game
 from discord.ext import commands
 
 # .env
@@ -20,13 +20,13 @@ default_prefix = "!"
 
 class CustomBot(commands.Bot):
     def __init__(self):
+        self.activity = Game(name="made by davidd#7551")
+        self.status = Status.idle
         # Call superclass commands.Bot. Equal to commands.Bot(command_prefix=self.get_prefix)
         super().__init__(
             command_prefix=self.get_prefix_,
-            activity=discord.Game(
-                name="made by david.#7551"
-            ),
-            status=discord.Status.idle
+            activity=self.activity,
+            status=self.status
         )
 
         self.database = get_event_loop().run_until_complete(
