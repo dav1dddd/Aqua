@@ -1,32 +1,28 @@
 # Discord
 from asyncpg import create_pool
-import sentry_sdk
 from asyncio import get_event_loop
 import random
 from os import getenv, listdir, path
-from discord import Status, Game
+from discord import Status, Game, Intents
 from discord.ext import commands
 
 # .env
 from dotenv import load_dotenv
 load_dotenv()
 
-# sentry
-dsn = getenv("SENTRY_DSN_KEY")
-sentry_sdk.init(dsn)
-
 # Default prefix
 default_prefix = "!"
 
 class CustomBot(commands.Bot):
     def __init__(self):
-        self.activity = Game(name="made by davidd#7551")
+        # self.activity = Game(name="made by davidd#7551")
         self.status = Status.idle
         # Call superclass commands.Bot. Equal to commands.Bot(command_prefix=self.get_prefix)
         super().__init__(
             command_prefix=self.get_prefix_,
-            activity=self.activity,
-            status=self.status
+            # activity=self.activity,
+            status=self.status,
+            intents=Intents.all()
         )
 
         self.database = get_event_loop().run_until_complete(
