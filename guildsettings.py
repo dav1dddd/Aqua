@@ -68,6 +68,7 @@ class guildSettings(commands.Cog):
                         """,
                         str(prefix.content)
                     )
+                    await ctx.send(f"Prefix set to: {prefix.content}")
 
            
             # Logs
