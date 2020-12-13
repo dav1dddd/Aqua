@@ -20,4 +20,5 @@ Aqua is a discord bot developed in [discord.py](https://discordpy.readthedocs.io
 - Bot dashboard developed in [Golang]("golang.org")
 
   
-
+### PyYAML error
+If you get this error, just ignore it. The bot will still work fine.
