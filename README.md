@@ -21,4 +21,4 @@ Aqua is a discord bot developed in [discord.py](https://discordpy.readthedocs.io
 
   
 ### PyYAML error
-If you get this error, just ignore it. The bot will still work fine.
+If you get this error when installing deps from requirements.txt, just ignore it. The bot will still work fine.
