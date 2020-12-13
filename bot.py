@@ -5,6 +5,7 @@ import random
 from os import getenv, listdir, path
 from discord import Status, Game, Intents
 from discord.ext import commands
+from argparse import ArgumentParser
 
 # .env
 from dotenv import load_dotenv
@@ -15,12 +16,10 @@ default_prefix = "!"
 
 class CustomBot(commands.Bot):
     def __init__(self):
-        # self.activity = Game(name="made by davidd#7551")
         self.status = Status.idle
         # Call superclass commands.Bot. Equal to commands.Bot(command_prefix=self.get_prefix)
         super().__init__(
             command_prefix=self.get_prefix_,
-            # activity=self.activity,
             status=self.status,
             intents=Intents.all()
         )
@@ -81,7 +80,9 @@ for e in listdir(path=f"./events"):
         # Append "events." to filename, and load the events :D
         bot.load_extension(f"events.{split}")
 
-# # Connect to the Discord API
+# Connect to the Discord API
 if __name__ == "__main__":
-    t = getenv("TOKEN")
-    bot.run(t)
+    # Allow using arg for token to connect to Discord API
+    parser = ArgumentParser(description="token (optional)")
+    parser.add_argument("-t", "--token", type=str, nargs="?", default=bot.run(getenv("TOKEN")), help="The discord bot token!", required=False)
+    parser.parse_args()
