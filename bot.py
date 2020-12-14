@@ -61,7 +61,7 @@ class CustomBot(commands.Bot):
 bot = CustomBot()
 
 # Load cogs
-for c in listdir(path=f"./cogs"):
+for c in listdir(path="./cogs"):
     # Check if files end with .py
     if c.endswith(".py"):
         # Split .py, then remove .py and get only the 'root' and not the 'ext'
@@ -72,7 +72,7 @@ for c in listdir(path=f"./cogs"):
 # Bot rich presence
 
 # Load events
-for e in listdir(path=f"./events"):
+for e in listdir(path="./events"):
     # Check if files end with .py
     if e.endswith(".py"):
         # Split .py, then remove .py and get only the 'root' and not the 'ext'
