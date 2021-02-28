@@ -40,36 +40,51 @@ class guildSettings(commands.Cog):
             await ctx.send("You didn't react on time")
         else:
             db = self.bot.database
-
             # Prefix
-            if str(reaction.emoji) == reactions[0]:
-                # Prefix
-                checkPrefixExists = await db.fetchrow(
+            if str(reaction[0]) == reactions[0]:
+                # Ask for prefix
+                await ctx.send(embed=Embed(
+                    title="Type in the prefix that you want"
+                ))
+
+                # Wait for websocket event
+                prefix = await self.bot.wait_for("message")
+
+                prefixval = await db.fetchrow(
                     """
                     SELECT prefix FROM guilds
-                    WHERE guildID = $1
+                    WHERE guild_id = $1
                     """,
                     ctx.message.guild.id
                 )
 
-                prefixembed = Embed(
-                    title="Type in the prefix that you want"
-                )
-                if checkPrefixExists:
-                    # Wait for websocket event
-                    prefix = self.bot.wait_for("message")
-
-                    # Updated the prefix in the database with the prefix given
+                # Update the prefix in the database with the prefix given
+                if prefixval[0] == prefix.content:
+                    await ctx.send("That prefix is already set.")
+                else:
                     await db.execute(
-                        """
-                        INSERT INTO guilds
-                        """
+                        f"""                        
+                        UPDATE guilds SET prefix = $1 WHERE prefix = '{prefixval[0]}'
+                        """,
+                        str(prefix.content)
                     )
+                    await ctx.send(f"Prefix set to: {prefix.content}")
 
            
             # Logs
-            if str(reaction.emoji) == reactions[1]:
+            if str(reaction[0]) == reactions[1]:
                 # Logs 📜
+
+                # Create table and add channel ID to database. This can be fetched in on_member_join or another event (for sending logs to a different channel).
+                await db.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS logs(
+                        id serial PRIMARY KEY,
+                        guildID bigint,
+                        logchannel bigint
+                    )
+                    """
+                )
 
                 # Check if the channel ID exists in the database
                 # Send an embed if it does exist
@@ -110,17 +125,6 @@ class guildSettings(commands.Cog):
                     
                     # Wait for websocket event "message"
                     channel_id = await self.bot.wait_for("message")
-
-                    # Create table and add channel ID to database. This can be fetched in on_member_join or another event (for sending logs to a different channel).
-                    await db.execute(
-                        """
-                        CREATE TABLE IF NOT EXISTS logs(
-                            id serial PRIMARY KEY,
-                            guildID bigint,
-                            logchannel bigint
-                        )
-                        """
-                    )
 
                     await db.execute(
                         """
